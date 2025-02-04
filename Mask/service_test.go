@@ -2,7 +2,7 @@ package Mask_test
 
 import (
 	"FileMask/Mask"
-	"github.com/google/go-cmp/cmp"
+	"fmt"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
 	"testing"
@@ -52,22 +52,23 @@ func TestPresent_Present(t *testing.T) {
 	})
 }
 
-func TestNewService(t *testing.T) {
-	expected := &Mask.Service{&Mask.Prod{Adress: "/Users/bocman/GolandProjects/FileMask/file.txt"}, &Mask.Present{"/Users/bocman/GolandProjects/FileMask/find.txt"}}
-	result := Mask.NewService(Mask.NewProducer("/Users/bocman/GolandProjects/FileMask/file.txt"), Mask.NewPresenter("/Users/bocman/GolandProjects/FileMask/find.txt"))
-	if diff := cmp.Diff(expected, result); diff != "" {
-		t.Error(diff)
-	}
-}
-
 func TestDataMask(t *testing.T) {
-	mProducer := Mask.NewProducer("/Users/bocman/GolandProjects/FileMask/file.txt")
-	s := Mask.Service{mProducer, Mask.Present{}}
-	expected := []string{"ahttp://**** .... http://****"}
-	data, _ := s.Prod.Produce()
-	result := s.DataMask(data)
-	if diff := cmp.Diff(expected, result); diff != "" {
-		t.Error(diff)
+	data := []struct {
+		name     string
+		text     []string
+		expected []string
+	}{
+		{"first", []string{"http://texttext text"}, []string{"http://******** text"}},
+		{"second", []string{"hi http://http:// bye"}, []string{"hi http://******* bye"}},
+		{"third", []string{"hi http://te!*xt"}, []string{"hi http://******"}},
+	}
+	s := Mask.Service{Mask.Prod{}, Mask.Present{}}
+	for _, d := range data {
+		t.Run(d.name, func(t *testing.T) {
+			result := s.DataMask(d.text)
+			fmt.Println(result)
+			assert.Equal(t, d.expected, result)
+		})
 	}
 
 }

@@ -2,11 +2,19 @@ package main
 
 import (
 	"FileMask/Mask"
+	"fmt"
 )
 
 func main() {
-	mProducer := Mask.NewProducer("/Users/bocman/GolandProjects/FileMask/file.txt")
-	mPresenter := Mask.NewPresenter("/Users/bocman/GolandProjects/FileMask/file2.txt")
+	fmt.Println("Введите адрес файла, данные которого нужно считать")
+	adr := ""
+	fmt.Scanln(&adr)
+	mProducer := Mask.NewProducer(adr)
+
+	fmt.Println("Введите адрес файла для записи результата")
+	fmt.Scanln(&adr)
+	mPresenter := Mask.NewPresenter(adr)
+
 	workNewService := Mask.NewService(mProducer, mPresenter)
 	workNewService.Run()
 }

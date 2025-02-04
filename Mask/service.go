@@ -28,6 +28,7 @@ func (s *Service) DataMask(data []string) []string {
 }
 
 func (s *Service) Run() error {
+
 	data, err := s.Prod.Produce()
 	if err != nil {
 		return err
